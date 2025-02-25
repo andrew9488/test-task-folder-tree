@@ -18,17 +18,15 @@ export const App: FC = () => {
         m: "0 auto",
       }}
     >
-      <>
-        {tree ? <Tree tree={tree} rootName={tree.name} /> : <CreateTree />}
-        <Snackbar
-          open={!!actionError}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        >
-          <Alert variant="filled" severity="error">
-            {actionError}
-          </Alert>
-        </Snackbar>
-      </>
+      {tree ? <Tree tree={tree} /> : <CreateTree />}
+      <Snackbar
+        open={!!actionError}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert variant="filled" severity="error">
+          {actionError}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

@@ -1,50 +1,76 @@
-import { FC, memo, useCallback, useState } from "react";
-import { Collapse, List } from "@mui/material";
+import { FC, memo, useState } from "react";
+import {
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 
 import { ITree } from "../core";
 import { TreeNode } from "./tree-node.component";
+import { AddModal } from "./modals";
 
 interface ITreeProps {
   tree: ITree;
-  rootName: string;
-  withPadding?: boolean;
 }
 
-export const Tree: FC<ITreeProps> = memo(
-  ({ tree, rootName, withPadding = false }) => {
-    const [isOpened, setIsOpened] = useState<Record<string, boolean>>({});
+export const Tree: FC<ITreeProps> = memo(({ tree }) => {
+  const [isOpened, setIsOpened] = useState(false);
 
-    const handleOpenClick = useCallback((id: string) => {
-      setIsOpened((prev) => ({
-        ...prev,
-        [id]: !prev[id],
-      }));
-    }, []);
+  const handleOpenClick = (): void => setIsOpened((_isOpened) => !_isOpened);
 
-    return (
-      <List
-        sx={{ width: "100%", padding: "0", marginLeft: withPadding ? 1 : 0 }}
-        component="ul"
+  return (
+    <List sx={{ width: "100%", marginLeft: 0 }}>
+      <ListItemButton
+        onClick={handleOpenClick}
+        sx={{
+          position: "relative",
+          padding: "0 4px",
+          width: "max-content",
+          pointerEvents: "all",
+          columnGap: "4px",
+          ":hover": {
+            cursor: "pointer",
+          },
+        }}
       >
-        <TreeNode
-          nodeId={tree.id}
-          name={tree.name}
-          isOpened={!!isOpened[tree.id]}
-          rootName={rootName}
-          onOpenClick={handleOpenClick}
-        />
-        {tree.children.map((treeNode) => (
-            <Collapse
-              in={!!isOpened[tree.id]}
-              timeout="auto"
-              unmountOnExit
-              key={treeNode.id}
+        <ListItemIcon sx={{ minWidth: "max-content" }}>
+          {isOpened ? (
+            <FolderOpenIcon fontSize="small" />
+          ) : (
+            <FolderIcon fontSize="small" />
+          )}
+        </ListItemIcon>
+        <ListItemText primary={tree.name} />
+        {isOpened && (
+          <>
+            <ListItemIcon
+              sx={{
+                ":hover": {
+                  opacity: 0.8,
+                },
+                paddingLeft: "4px",
+                minWidth: "max-content",
+              }}
             >
-              <Tree tree={treeNode} rootName={rootName} withPadding />
-            </Collapse>
-          ))
-        }
-      </List>
-    );
-  }
-);
+              <AddModal treeName={tree.name} parentNodeId={tree.id} />
+            </ListItemIcon>
+          </>
+        )}
+      </ListItemButton>
+      {isOpened &&
+        tree.children.length > 0 &&
+        tree.children.map(({ name, children, id }) => (
+          <TreeNode
+            key={id}
+            rootName={tree.name}
+            children={children}
+            name={name}
+            nodeId={id}
+          />
+        ))}
+    </List>
+  );
+});

@@ -27,7 +27,12 @@ export const BasicModal: FC<PropsWithChildren<IBasicModalProps>> = ({
   children,
 }) => {
   return (
-    <div onClick={(e) => e.preventDefault()}>
+    <div
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
       <Modal open={isOpened} onClose={onModalCloseClick}>
         <Box sx={style}>{children}</Box>
       </Modal>

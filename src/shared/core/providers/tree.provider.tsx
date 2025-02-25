@@ -157,12 +157,12 @@ export const TreeProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const useTreeDataContext = () => {
+export const useTreeDataContext = (): ITreeContextData => {
   const context = useContext(TreeContextData);
   return useMemo(() => context, [context]);
 };
 
-export const useTreeHandlersContext = () => {
+export const useTreeHandlersContext = (): ITreeContextHandlers => {
   const context = useContext(TreeContextHandlers);
   return useMemo(() => context, [context]);
 };

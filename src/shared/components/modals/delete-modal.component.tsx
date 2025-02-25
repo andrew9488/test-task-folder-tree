@@ -1,29 +1,33 @@
 import { FC, useState, MouseEvent } from "react";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import { Typography } from "@mui/material";
+import { Typography, Button, Divider } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { BasicModal } from "./basic-modal.component";
+import { useTreeHandlersContext } from "../../core";
 
 interface IDeleteModalProps {
-  onDeleteTreeNode: () => Promise<void>;
+  treeName: string;
+  nodeId: number;
 }
 
-export const DeleteModal: FC<IDeleteModalProps> = ({ onDeleteTreeNode }) => {
+export const DeleteModal: FC<IDeleteModalProps> = ({ treeName, nodeId }) => {
   const [isOpened, setIsOpened] = useState(false);
   const [isBtnSubmitting, setIsBtnSubmitting] = useState(false);
+  const { deleteTreeNode } = useTreeHandlersContext();
 
-  const handleModalOpenClick = (event: MouseEvent<SVGSVGElement>) => {
+  const handleModalOpenClick = (event: MouseEvent<SVGSVGElement>): void => {
     event.preventDefault();
     event.stopPropagation();
     setIsOpened(true);
   };
-  const handleModalCloseClick = () => setIsOpened(false);
+  const handleModalCloseClick = (): void => setIsOpened(false);
 
   const handleDeleteTreeNode = async (): Promise<void> => {
     setIsBtnSubmitting(true);
-    await onDeleteTreeNode();
+    await deleteTreeNode({
+      treeName,
+      nodeId,
+    });
     setIsBtnSubmitting(false);
     setIsOpened(false);
   };
